@@ -8,12 +8,12 @@ The handoff. Rewritten at the end of every session; read at the start of the nex
 Last session: <date>
 
 ## Position
-- Plan node: <# / name — or "between lessons NNNN and NNNN">
+- Plan node: <# / name — or "between lessons N and N">
 - Mid-lesson: <where exactly, if a lesson file is unfinished: which concept was being established>
 - Warm-up gate due: <yes / no — no if a warm-up ran at session start>
 
 ## Next up
-<The concrete next action: teach node N, finish lesson NNNN, write reference sheet for X, ...>
+<The concrete next action: teach node N, finish lesson N, write reference sheet for X, ...>
 
 ## Open threads
 - <anything the user asked to follow up on, open questions, ideas to test>

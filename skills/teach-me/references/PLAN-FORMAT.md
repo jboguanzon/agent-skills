@@ -26,4 +26,4 @@ graph TD
 
 Render the actual DAG in the map section: unconditional truths at the roots, each derived node hanging off its dependencies, the goal as the sink. Small map, short labels — a map, not the territory. Every node in the table appears in (or is a leaf of) the DAG.
 
-Supplementary gap-filler lessons get appended as their own rows (`3b`), marked `supp`, and are **not** part of the main DAG — they patch, they don't extend.
+Supplementary gap-filler lessons get appended as their own rows (`3a`, `3b`, ...), marked `supp`, and are **not** part of the main DAG — they patch, they don't extend. A row id is the lesson filename prefix: plan row `3a` is lesson `3a-<slug>.md`.

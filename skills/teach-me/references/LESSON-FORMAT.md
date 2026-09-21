@@ -1,11 +1,11 @@
-# Lesson Format (lessons/NNNN-<slug>.md)
+# Lesson Format (lessons/N-<slug>.md)
 
-The primary unit of teaching: one self-contained lesson = one sitting, one tangible win, tied to the mission. Numbers increment in the order produced; gap-fillers get the next number with a `-supp-` infix (`0004-supp-logical-and-operators.md`).
+The primary unit of teaching: one self-contained lesson = one sitting, one tangible win, tied to the mission. A lesson is named for the **plan node it teaches**: `N-<slug>.md`, where `N` is that node's id in `PLAN.md`. A supplementary gap-filler is named for the node it patches with a letter suffix — `Na-<slug>.md`, then `Nb-<slug>.md`, and so on; it does not consume a node number. If a node needs more than one lesson, split it into separate nodes in the plan rather than overloading the letter space.
 
 ````md
 # <Lesson Title>
 
-<Topic> · Lesson NNNN · <date> · <mission link>
+<Topic> · Lesson N · <date> · <mission link>
 
 ## Why this matters
 <1-3 sentences tying the lesson to MISSION.md>
@@ -47,7 +47,7 @@ Rules:
 - Ends with 2-3 callout self-check quizzes — plain Obsidian, no plugin; authoring rules under [Self-check quizzes (callouts)](#self-check-quizzes-callouts).
 - Recommends one primary source for the user to read themselves when one exists.
 - The compressed essence (syntax table, algorithm, glossary) lives in `reference/` too — lessons are revisited rarely, reference documents are.
-- Supp lessons additionally state at the top: `> [!warning] Supplementary — fills a gap quiz-gated in lesson NNNN` and link back to it.
+- Supp lessons additionally state at the top: `> [!warning] Supplementary — fills a gap quiz-gated in lesson N` and link back to it.
 
 ## Self-check quizzes (callouts)
 

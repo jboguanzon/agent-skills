@@ -1,6 +1,6 @@
-# Learning Record Format (learning-records/NNNN-<slug>.md)
+# Learning Record Format (learning-records/N-<slug>.md)
 
-ADR-style evidence of what the user has **demonstrated** learning. Used to compute the zone of proximal development and to steer what to teach next. Most records are a single paragraph. Number by scanning the dir for the highest number and incrementing.
+ADR-style evidence of what the user has **demonstrated** learning. Used to compute the zone of proximal development and to steer what to teach next. Most records are a single paragraph. Number sequentially in the order produced, plain `N-<slug>.md` with no padding — records are a flat chronological log, so the letter-suffix scheme used for lesson supplements does not apply here.
 
 Write one when any of these is true:
 
@@ -22,4 +22,4 @@ Rules:
 
 - **Coverage is not learning.** Material merely covered does not qualify; wait for evidence.
 - Not a journal: no session-by-session activity logs.
-- **Supersession**: when a later record contradicts an earlier one, mark the old record `Status: superseded by record NNNN` rather than deleting — the history of how understanding evolved is itself signal.
+- **Supersession**: when a later record contradicts an earlier one, mark the old record `Status: superseded by record N` rather than deleting — the history of how understanding evolved is itself signal.

@@ -1,6 +1,6 @@
 ---
 name: teach-me
-description: Teach the user any topic at their current level of understanding as a persistent curriculum of self-contained Obsidian markdown lessons. Probes a one-time baseline, plans a dependency-grounded path, teaches node-by-node with quiz gates, verifies facts and executes code, and writes lessons into the user's learn vault so sessions resume and refreshers work from files. Use when the user wants to learn a topic ("teach me X"), resume one ("continue X", "next lesson"), or refresh one ("review X").
+description: Teach the user any topic at their current level of understanding as a persistent curriculum of self-contained Obsidian markdown lessons. Probes a one-time baseline, plans a dependency-grounded path, teaches node-by-node with quiz gates and follow-up questions, verifies facts and executes code, and writes lessons into the user's learn vault, consolidating the finished topic into a quick-reference note so sessions resume and refreshers work from files. Use when the user wants to learn a topic ("teach me X"), resume one ("continue X", "next lesson"), or refresh one ("review X").
 ---
 
 # Teach-Me
@@ -28,11 +28,12 @@ Topic folder layout:
 ├── MISSION.md              # why the user is learning this; ground every teaching decision
 ├── BASELINE.md             # probe results: per-strand floors/ceilings, known & unknown
 ├── PLAN.md                 # dependency DAG (mermaid) + ordered node list + status
+├── OVERVIEW.md             # course-complete consolidation: the whole topic trimmed for quick reference
 ├── RESOURCES.md            # vetted sources used/verified; annotated; optional
 ├── SESSION.md              # handoff: where the session stopped, what's next, open threads
-├── lessons/                # NNNN-<slug>.md, sequential numbers; gap-fillers marked NNNN-supp-<slug>.md
+├── lessons/                # N-<slug>.md, N = the plan node id; supplements Na-<slug>.md, Nb-<slug>.md
 ├── reference/              # compressed cheat-sheets, glossaries, algorithms — what the user returns to
-├── learning-records/       # NNNN-<slug>.md — ADR-style evidence of demonstrated learning
+├── learning-records/       # N-<slug>.md — ADR-style evidence of demonstrated learning
 └── assets/                 # svg diagrams, embedded via ![[...]]
 ```
 
@@ -44,7 +45,7 @@ Three entry points, three flows. Every flow writes state files — read the matc
 
 ### 1. teach me X — new topic
 
-A new topic folder means a fresh three-phase run, in order: **probe → plan → teach**.
+A new topic folder means a fresh four-phase run, in order: **probe → plan → teach → consolidate**.
 
 **Phase 1 — Probe (first session only).** Locate the *edge* of the learner's understanding along every strand the topic will lean on. Ask in chat; calibrate difficulty to each answer. Scale the depth to the topic, never skip it.
 
@@ -68,12 +69,20 @@ A new topic folder means a fresh three-phase run, in order: **probe → plan →
 1. **Motivate.** Why do we need this node right now? What problem does it solve? Don't assert a truth just because it's true — motivate why *this* truth, *now*.
 2. **Establish.** Foundational truth: state it plainly, no caveats; surface a clean atomic unit when one exists ("ALL X is done through {Y}"). Derived step: build it up from what's established via a motivated move — Socratic (let them attempt the discovery first) when they can plausibly reason their way there, expository (3B1B-style narration) otherwise.
 3. **Connect.** Make the dependency edge explicit: show exactly how this node hangs off what's already in place.
-4. **Author and hand off.** Write the lesson file as the deliverable (authoring rules in [Lessons](#lessons)), then **stop and send the user to read it**: "read lesson NNNN, tell me when you're done." Do not continue until they confirm they've read it. Never ask the gating questions before that confirmation — the gate must not be visible before the user has studied the lesson, or both the lesson's self-checks and the gate are spoiled.
+4. **Author and hand off.** Write the lesson file as the deliverable (authoring rules in [Lessons](#lessons)), then **stop and send the user to read it**: "read lesson N, tell me when you're done." Do not continue until they confirm they've read it. Never ask the gating questions before that confirmation — the gate must not be visible before the user has studied the lesson, or both the lesson's self-checks and the gate are spoiled.
 5. **Check.** Only once the user has confirmed they read the lesson, confirm the node landed with a quiz gate (see [Quizzes](#quizzes)). A missed foundation is as dangerous as a missed derived fact: stop and fix it before building on top of it.
+6. **Open the floor.** After the gate — whether it passed or failed — give the user room to ask clarification or follow-up questions before you move to the next node. Answer in chat, then check the queue is empty again. A question that exposes a real gap or opens a side-branch gets its own sub-lesson (`Na-<slug>.md`, quiz-gated like any other) instead of a chat-only answer, so it lands in the notes. Advance only when the gate has passed *and* no questions remain.
 
-**Advance only through gates.** After every major concept node: quiz — but only after the user has read the lesson and greenlit the gate. Pass = advance. Fail = re-teach the node, and when the gap is non-trivial write a supplementary gap-filler lesson (`NNNN-supp-<slug>.md`) plus a re-quiz of the failed items. Never advance on a failed gate.
+**Advance only through gates.** After every major concept node: quiz — but only after the user has read the lesson and greenlit the gate, and only once their follow-up questions are answered. Pass = advance. Fail = re-teach the node, and when the gap is non-trivial write a supplementary gap-filler lesson (`Na-<slug>.md`, `N` being the node it patches) plus a re-quiz of the failed items. Never advance on a failed gate or with questions still open.
 
 **Session end.** Update `SESSION.md` (position, what's next, open threads), mark landed nodes in `PLAN.md`, and write learning records for anything the learner **demonstrated** (not merely covered). Offer to add used sources to `RESOURCES.md`.
+
+**Phase 4 — Consolidate (course complete).** When every node in `PLAN.md` is done and the user has no remaining questions, close the topic with one standalone reference note:
+
+- Write `OVERVIEW.md` at the topic root per [OVERVIEW-FORMAT.md](references/OVERVIEW-FORMAT.md): the whole topic compressed into a single scannable document — the unconditional truths, the decision rules, the key syntax/algorithm tables and glossary, the gotchas, and what the mission now enables. Trim hard: cut the narration, analogies, and teaching scaffolding; keep only what the user will reach for mid-task.
+- Link each section back to the lesson that introduced it, and link the overview from `MISSION.md` so it is the obvious entry point.
+- No new material — it is a re-compression of what the nodes already established.
+- Mark the topic complete in `PLAN.md`, write the final learning records, and set `SESSION.md` to complete (later visits go through `review` mode).
 
 ### 2. continue X — resume
 
@@ -82,6 +91,7 @@ Read the topic's `SESSION.md`, `PLAN.md`, `MISSION.md`, and `learning-records/`.
 - Mid-lesson (unfinished node in `SESSION.md`): resume there — recap the established nodes in one or two sentences, then continue the loop.
 - New session, completed lessons: run a short **warm-up gate** (2-3 quick questions over the last lesson) to confirm retention, then proceed to the next node. Wrong answers here mean the node decayed: re-teach it briefly before moving on, and note it in the learning records.
 - Nothing in `SESSION.md` says next: compute the next lesson from the mission + records (zone of proximal development) and propose it before teaching.
+- Topic complete (`SESSION.md` says complete): don't teach new material — offer a review pass and point at `OVERVIEW.md`, the consolidated quick-reference note.
 
 ### 3. review X — refresh
 
@@ -91,7 +101,7 @@ Use when the user returns to a topic for a refresher, or asks anything like "wha
 - Run a quiz sampling prior lessons (especially anything punctuated by a `!` flag in a record, i.e. corrected misconceptions — those are the highest-value items to re-check).
 - Use the lesson files' callout quizzes as the sampling instrument: read each question to the user, have them answer in chat, then unfold the answer callout to check together. Items they answer wrong or hesitate on are the direct evidence of what decayed.
 - Patch decayed nodes: brief re-teach in chat, update the affected lesson file and records.
-- No new material in review mode. The compressed `reference/` cheat-sheets are what the user actually returns to; point at them.
+- No new material in review mode. The compressed `reference/` material — in particular the consolidated `OVERVIEW.md` — is what the user actually returns to; point at it.
 
 ## Lessons
 
@@ -134,6 +144,7 @@ Every vault state file has a template in `references/`. Read the one for the fil
 | `MISSION.md` | [references/MISSION-FORMAT.md](references/MISSION-FORMAT.md) |
 | `BASELINE.md` | [references/BASELINE-FORMAT.md](references/BASELINE-FORMAT.md) |
 | `PLAN.md` | [references/PLAN-FORMAT.md](references/PLAN-FORMAT.md) |
+| `OVERVIEW.md` | [references/OVERVIEW-FORMAT.md](references/OVERVIEW-FORMAT.md) |
 | `RESOURCES.md` | [references/RESOURCES-FORMAT.md](references/RESOURCES-FORMAT.md) |
 | `lessons/*.md` | [references/LESSON-FORMAT.md](references/LESSON-FORMAT.md) |
 | `reference/*.md` | [references/REFERENCE-FORMAT.md](references/REFERENCE-FORMAT.md) |
