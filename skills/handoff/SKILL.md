@@ -9,6 +9,8 @@ Write a handoff document summarising the current conversation so a fresh agent c
 
 Include a "suggested skills" section in the document, which suggests skills that the agent should invoke.
 
+Include a suggested session title: a short, specific name (roughly 60 characters or less) that the user can give the next session so it is easy to find later. Derive it from the work that will continue, not from the current session's history.
+
 Do not duplicate content already captured in other artifacts (specs, plans, ADRs, issues, commits, diffs). Reference them by path or URL instead.
 
 Redact any sensitive information, such as API keys, passwords, or personally identifiable information.
@@ -17,11 +19,12 @@ If the user passed arguments, treat them as a description of what the next sessi
 
 ## Output a copy-pasteable prompt
 
-After saving the document, also print a ready-to-paste raw markdown prompt the user can copy to start the next session. It must be wrapped in a markdown code fence so it can be copied verbatim (including any code blocks inside it). The prompt should:
+After saving the document, also print a ready-to-paste raw markdown prompt the user can copy to start the next session. It must be wrapped in a markdown code fence so it can be copied verbatim (including any code blocks inside it). Right before the fence, print one line telling the user they can name the new session with the suggested title using their harness's session naming command (e.g. `/name <title>` in pi). The prompt should:
 
-1. Name the file to read first, e.g. "Read the handoff at `${TMPDIR}/<filename>`." (The printed prompt must reference the `$TMPDIR`-based path the save used — if the user overrode the location, reference that path instead.)
-2. Restate the next session's goal in one or two sentences (from the handoff's purpose).
-3. List the suggested skills as `/skill` invocations, one per line.
-4. Tell the agent to work through the handoff and confirm once done.
+1. Open with the suggested session title as a plain line, e.g. "Session title: <title>".
+2. Name the file to read first, e.g. "Read the handoff at `${TMPDIR}/<filename>`." (The printed prompt must reference the `$TMPDIR`-based path the save used — if the user overrode the location, reference that path instead.)
+3. Restate the next session's goal in one or two sentences (from the handoff's purpose).
+4. List the suggested skills as `/skill` invocations, one per line.
+5. Tell the agent to work through the handoff and confirm once done.
 
 Keep it short — it's a kickoff, not the handoff itself.
