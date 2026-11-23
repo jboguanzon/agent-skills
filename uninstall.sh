@@ -41,4 +41,4 @@ for target in "${TARGETS[@]}"; do
   done
 done
 
-printf '\nRemoved %d symlink(s). Backups created by install.sh (*.bak.*) are left in place for you to review.\n' "$removed"
+printf '\nRemoved %d symlink(s). Backups created by install.sh live in <target>-backup/ and are left in place for you to review.\n' "$removed"

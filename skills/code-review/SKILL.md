@@ -14,9 +14,9 @@ Both axes run as **independent passes** so they don't bias each other, then this
 
 ### 1. Pin the fixed point
 
-Whatever the user said is the fixed point — a commit SHA, branch name, tag, `main`, `HEAD~5`, etc. If they didn't specify one, ask for it.
+Whatever the user said is the fixed point — a commit SHA, branch name, tag, `main`, `HEAD~5`, etc. If they didn't specify one, use the merge-base with the default branch's remote ref (`origin/HEAD`, falling back to `origin/main`, then `main`) and state the choice; ask only if no default branch resolves.
 
-Capture the diff command once: `git diff <fixed-point>...HEAD` (three-dot, so the comparison is against the merge-base). Also note the list of commits via `git log <fixed-point>..HEAD --oneline`.
+Capture the diff command once: `git diff <fixed-point>...HEAD` for a fixed point the user named, or `git diff <merge-base>` for the derived one, so uncommitted work is included. Also list commits via `git log <fixed-point>..HEAD --oneline` and untracked files via `git ls-files --others --exclude-standard`, for the commit/file list.
 
 Before going further, confirm the fixed point resolves (`git rev-parse <fixed-point>`) and the diff is non-empty. A bad ref or empty diff should fail here — not inside the two passes.
 
@@ -25,9 +25,10 @@ Before going further, confirm the fixed point resolves (`git rev-parse <fixed-po
 Look for the originating spec, in this order:
 
 1. **The spec path/link the user passed** (e.g. `/skill:code-review docs/tickets/feature.md` or a URL). If the user gave a link, fetch it (curl/read) and save the contents to a local file so both passes can reference it.
-2. Issue references in the commit messages (`#123`, `Closes #45`, GitLab `!67`, etc.) — fetch them with whatever the repo already has set up (GitHub `gh` CLI, GitLab `glab`, a repo-local issue-tracker doc). If no documented fetch path exists, ask the user to paste the issue text.
-3. A spec file under `docs/`, `specs/`, or `.scratch/` matching the branch name or feature.
-4. If nothing is found, ask the user where the spec is. If they say there isn't one, the **Spec** pass is skipped and the final report notes "no spec available".
+2. **An issue/ticket ID in the branch name** (e.g. `ABC-123`, `#123`). Resolve it with whatever exists: a tracker CLI or MCP the session has, then any local notes or spec folder named after that ID that the user's instructions point to. Don't hardcode Jira or any vault path. If nothing resolves, fall through to the next source.
+3. Issue references in the commit messages (`#123`, `Closes #45`, GitLab `!67`, etc.) — fetch them with whatever the repo already has set up (GitHub `gh` CLI, GitLab `glab`, a repo-local issue-tracker doc). If no documented fetch path exists, ask the user to paste the issue text.
+4. A spec file under `docs/`, `specs/`, or `.scratch/` matching the branch name or feature.
+5. If nothing is found, ask the user where the spec is. If they say there isn't one, the **Spec** pass is skipped and the final report notes "no spec available".
 
 ### 3. Identify the standards sources
 

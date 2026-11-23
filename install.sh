@@ -6,7 +6,9 @@
 # Idempotent: rerun after `git pull` to add new skills, refresh links after a
 # repo move, and prune links for skills that were removed from the repo.
 # Real files or directories that collide with a skill name are backed up
-# (name.bak.<timestamp>.<pid>) next to the collision, never deleted.
+# (<target>-backup/<name>.bak.<timestamp>.<pid>), outside the skills directory
+# so harnesses never load the backup as a duplicate skill, and never deleted.
+# A symlink that already resolves to the repo's own copy is left alone.
 #
 # pi and Claude Code both follow symlinked skill directories, so no copying
 # is needed and every machine stays in sync with this repo.
@@ -35,11 +37,23 @@ TARGETS=(
 
 backups=0
 
+# Absolute, symlink-free form of a path, trailing slashes ignored. Empty when
+# the path cannot be resolved.
+resolved() {
+  local path="$1"
+  while [ "${path%/}" != "$path" ]; do path="${path%/}"; done
+  realpath "$path" 2>/dev/null || true
+}
+
 backup() {
-  local dest="$1.bak.$(date +%Y%m%d%H%M%S).$$"
-  mv "$1" "$dest"
+  local target="$1" path="$2"
+  local dir="$target-backup"
+  local dest
+  dest="$dir/$(basename "$path").bak.$(date +%Y%m%d%H%M%S).$$"
+  mkdir -p "$dir"
+  mv "$path" "$dest"
   backups=$((backups + 1))
-  printf '  backed up %s -> %s\n' "$1" "$dest"
+  printf '  backed up %s -> %s\n' "$path" "$dest"
 }
 
 main() {
@@ -67,15 +81,15 @@ main() {
       link="$target/$skill"
       if [ -L "$link" ]; then
         dest="$(readlink "$link")"
-        if [ "$dest" = "$entry" ]; then
+        if [ "$(resolved "$link")" = "$(resolved "$entry")" ]; then
           printf 'ok       %s\n' "$link"
           continue
         fi
         printf 'replacing %s -> %s\n' "$link" "$dest"
-        backup "$link"
+        backup "$target" "$link"
       elif [ -e "$link" ]; then
         printf 'conflict %s (real file or dir)\n' "$link"
-        backup "$link"
+        backup "$target" "$link"
       fi
       ln -s "$entry" "$link"
       printf 'linked   %s -> %s\n' "$link" "$entry"
